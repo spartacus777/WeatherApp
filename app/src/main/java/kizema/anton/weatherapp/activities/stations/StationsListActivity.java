@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample.activities.stations;
+package kizema.anton.weatherapp.activities.stations;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +12,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import kizema.anton.mvpsample.R;
-import kizema.anton.mvpsample.adapters.MainAdapter;
-import kizema.anton.mvpsample.model.StationModel;
+import kizema.anton.weatherapp.R;
+import kizema.anton.weatherapp.adapters.MainAdapter;
+import kizema.anton.weatherapp.model.StationModel;
+import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class StationsListActivity extends AppCompatActivity implements StationsView {
 
@@ -84,7 +85,7 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
     }
 
     @Override
-    public void setData(List<StationModel> list) {
+    public void setData(List<WeatherForcastDto> list) {
         adapter.setData(list);
     }
 

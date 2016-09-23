@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample.model;
+package kizema.anton.weatherapp.model;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;

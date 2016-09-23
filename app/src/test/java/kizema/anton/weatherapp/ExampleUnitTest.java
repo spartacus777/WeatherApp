@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample;
+package kizema.anton.weatherapp;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,11 +7,11 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-import kizema.anton.mvpsample.activities.stations.StationsInteractor;
-import kizema.anton.mvpsample.activities.stations.StationsPresenter;
-import kizema.anton.mvpsample.activities.stations.StationsPresenterImpl;
-import kizema.anton.mvpsample.activities.stations.StationsView;
-import kizema.anton.mvpsample.model.StationModel;
+import kizema.anton.weatherapp.activities.stations.StationsInteractor;
+import kizema.anton.weatherapp.activities.stations.StationsPresenter;
+import kizema.anton.weatherapp.activities.stations.StationsPresenterImpl;
+import kizema.anton.weatherapp.activities.stations.StationsView;
+import kizema.anton.weatherapp.model.StationModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

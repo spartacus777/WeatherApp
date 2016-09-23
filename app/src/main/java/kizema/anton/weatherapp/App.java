@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample;
+package kizema.anton.weatherapp;
 
 import android.app.Application;
 

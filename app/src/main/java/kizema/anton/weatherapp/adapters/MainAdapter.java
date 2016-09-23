@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample.adapters;
+package kizema.anton.weatherapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import kizema.anton.mvpsample.model.StationModel;
+import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.BaseViewHolder> {
 
-    private List<StationModel> stationList;
+    private List<WeatherForcastDto> stationList;
 
-    public MainAdapter(List<StationModel> stationList) {
+    public MainAdapter(List<WeatherForcastDto> stationList) {
         this.stationList = stationList;
         notifyDataSetChanged();
     }
@@ -23,7 +23,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.BaseViewHolder
 
     public MainAdapter() {}
 
-    public void setData(List<StationModel> busModels){
+    public void setData(List<WeatherForcastDto> busModels){
         this.stationList = busModels;
         notifyDataSetChanged();
     }
@@ -56,8 +56,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.BaseViewHolder
     @Override
     public void onBindViewHolder(final BaseViewHolder holder, final int position) {
 
-        StationModel model = stationList.get(position);
-        holder.tvTitle.setText(model.getTitle());
+        WeatherForcastDto model = stationList.get(position);
+        holder.tvTitle.setText(model.time + " : " + model.description);
     }
 
     @Override

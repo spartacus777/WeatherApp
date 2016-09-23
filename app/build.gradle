@@ -57,9 +57,13 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     //retrofit
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
+    compile ('com.squareup.retrofit:retrofit:2.0.0-beta1') {
+        exclude module: 'okhttp'
+    }
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.okhttp3:okhttp:3.0.0'
+
     //    compile 'com.squareup.retrofit2:converter-simplexml:2.1.0'
 
     //activeandroid

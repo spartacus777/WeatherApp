@@ -1,8 +1,8 @@
-package kizema.anton.mvpsample.activities.stations;
+package kizema.anton.weatherapp.activities.stations;
 
 import java.util.List;
 
-import kizema.anton.mvpsample.model.StationModel;
+import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class StationsPresenterImpl implements StationsPresenter {
 
@@ -37,7 +37,7 @@ public class StationsPresenterImpl implements StationsPresenter {
     }
 
     private void loadFromDB(){
-        List<StationModel> list = stationsInteractor.loadDataFromDB();
+        List<WeatherForcastDto> list = stationsInteractor.loadDataFromDB();
         podactView.setData(list);
     }
 
@@ -50,7 +50,7 @@ public class StationsPresenterImpl implements StationsPresenter {
         loadDataIsInProgress = true;
         stationsInteractor.loadData(new StationsInteractor.OnCompletion() {
             @Override
-            public void onComplete(List<StationModel> list) {
+            public void onComplete(List<WeatherForcastDto> list) {
                 podactView.setData(list);
                 loadDataIsInProgress = false;
             }

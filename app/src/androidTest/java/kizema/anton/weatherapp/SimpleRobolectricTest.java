@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample;
+package kizema.anton.weatherapp;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
-import kizema.anton.mvpsample.activities.stations.StationsListActivity;
+import kizema.anton.weatherapp.activities.stations.StationsListActivity;
 
 import static org.junit.Assert.assertTrue;
 

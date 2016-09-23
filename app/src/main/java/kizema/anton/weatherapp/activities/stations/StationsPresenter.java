@@ -1,4 +1,4 @@
-package kizema.anton.mvpsample.activities.stations;
+package kizema.anton.weatherapp.activities.stations;
 
 
 import java.io.Serializable;

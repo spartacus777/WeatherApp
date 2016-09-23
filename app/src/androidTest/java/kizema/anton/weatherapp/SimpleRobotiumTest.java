@@ -1,10 +1,10 @@
-package kizema.anton.mvpsample;
+package kizema.anton.weatherapp;
 
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.robotium.solo.Solo;
 
-import kizema.anton.mvpsample.activities.stations.StationsListActivity;
+import kizema.anton.weatherapp.activities.stations.StationsListActivity;
 
 public class SimpleRobotiumTest extends
         ActivityInstrumentationTestCase2<StationsListActivity> {
