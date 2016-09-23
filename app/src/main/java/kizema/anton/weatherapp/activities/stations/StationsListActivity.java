@@ -14,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kizema.anton.weatherapp.R;
 import kizema.anton.weatherapp.adapters.MainAdapter;
-import kizema.anton.weatherapp.model.StationModel;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class StationsListActivity extends AppCompatActivity implements StationsView {
