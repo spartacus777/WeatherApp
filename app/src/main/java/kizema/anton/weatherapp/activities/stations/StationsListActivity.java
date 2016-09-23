@@ -1,9 +1,10 @@
 package kizema.anton.weatherapp.activities.stations;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -13,22 +14,28 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kizema.anton.weatherapp.R;
-import kizema.anton.weatherapp.adapters.MainAdapter;
+import kizema.anton.weatherapp.adapters.ViewPagerAdapter;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class StationsListActivity extends AppCompatActivity implements StationsView {
 
     private static final String PRESENTER_STR = "wefwefd";
 
-    @BindView(R.id.rvPodcasts)
-    public RecyclerView rvStations;
+//    @BindView(R.id.rvPodcasts)
+//    public RecyclerView rvStations;
 
     @BindView(R.id.loading)
     public ProgressBar loading;
 
-    private MainAdapter adapter;
+    @BindView(R.id.pager)
+    public ViewPager pager;
+
+    @BindView(R.id.ptTabStrip)
+    public PagerTabStrip ptTabStrip;
 
     private StationsPresenter stationsPresenter;
+
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,29 +61,48 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
     }
 
     private void init() {
-        rvStations.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        adapter = new MainAdapter();
-        rvStations.setAdapter(adapter);
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+        viewPagerAdapter = new ViewPagerAdapter(this);
+        pager.setAdapter(viewPagerAdapter);
+
+        viewPagerAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
 
-                if (adapter.getItemCount() == 0){
+                if (viewPagerAdapter.getCount() == 0){
                     loading.setVisibility(View.VISIBLE);
                 } else {
                     loading.setVisibility(View.GONE);
                 }
             }
         });
+
+//        rvStations.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+//        adapter = new MainAdapter();
+//        rvStations.setAdapter(adapter);
+//        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+//            @Override
+//            public void onChanged() {
+//                super.onChanged();
+//
+//                if (adapter.getItemCount() == 0){
+//                    loading.setVisibility(View.VISIBLE);
+//                } else {
+//                    loading.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+
+
     }
 
-    private void initPresenter(Bundle savedInstanceState){
+    private void initPresenter(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             stationsPresenter = (StationsPresenter) savedInstanceState.getSerializable(PRESENTER_STR);
         }
 
-        if (stationsPresenter == null){
+        if (stationsPresenter == null) {
             stationsPresenter = new StationsPresenterImpl(new StationsInteractorImpl());
         }
 
@@ -85,7 +111,8 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
 
     @Override
     public void setData(List<WeatherForcastDto> list) {
-        adapter.setData(list);
+//        adapter.setData(list);
+        viewPagerAdapter.setList(list);
     }
 
     @Override
