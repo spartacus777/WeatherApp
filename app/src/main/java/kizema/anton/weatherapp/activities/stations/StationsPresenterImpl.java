@@ -23,13 +23,17 @@ public class StationsPresenterImpl implements StationsPresenter {
     public void setView(StationsView podactView) {
         this.podactView = podactView;
 
-        UserPrefs prefs = new UserPrefs();
+        UserPrefs prefs = UserPrefs.getPrefs();
         if (prefs.hasLatLon()){
             loadData();
         } else {
             LocationHelper.getRealCoordinates(new LocationHelper.OmLocationReceived() {
                 @Override
                 public void onReceivedLocation(double lat, double lon) {
+                    UserPrefs prefs = UserPrefs.getPrefs();
+                    prefs.lon = lon;
+                    prefs.lat = lat;
+                    prefs.save();
                     loadData();
                 }
             });

@@ -19,7 +19,9 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="${applicationId}.model.StationModel"/>
+            android:value="${applicationId}.model.WeatherCityDto,
+            ${applicationId}.model.UserPrefs,
+            ${applicationId}.model.WeatherForcastDto"/>
 
         <activity android:name="kizema.anton.weatherapp.activities.stations.StationsListActivity">
             <intent-filter>

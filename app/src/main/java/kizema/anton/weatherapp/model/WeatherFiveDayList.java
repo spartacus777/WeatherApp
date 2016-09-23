@@ -185,16 +185,4 @@ public class WeatherFiveDayList {
         }
     }
 
-    public void save(){
-//        ActiveAndroid.beginTransaction();
-//        try {
-//            for (StationModel m : podcasts) {
-//                m.save();
-//            }
-//            ActiveAndroid.setTransactionSuccessful();
-//        }
-//        finally {
-//            ActiveAndroid.endTransaction();
-//        }
-    }
 }

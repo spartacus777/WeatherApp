@@ -3,6 +3,8 @@ package kizema.anton.weatherapp.activities.stations;
 import android.os.Handler;
 import android.util.Log;
 
+import com.activeandroid.ActiveAndroid;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 import kizema.anton.weatherapp.api.ApiConstants;
 import kizema.anton.weatherapp.api.ApiEndpoint;
+import kizema.anton.weatherapp.model.UserPrefs;
 import kizema.anton.weatherapp.model.WeatherCityDto;
 import kizema.anton.weatherapp.model.WeatherFiveDayList;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
@@ -67,9 +70,10 @@ public class StationsInteractorImpl implements StationsInteractor {
 
         Log.e("RRR", " ===== LOAD DATA ===== ");
 
+        UserPrefs prefs = UserPrefs.getPrefs();
         Map<String, String> data = new HashMap<>();
-        data.put("lon", "139");
-        data.put("lat", "35");
+        data.put("lon", "" + prefs.lon);
+        data.put("lat", "" + prefs.lat);
 
         Call<WeatherFiveDayList> call = apiService.getFiveDayForcast(data);
         call.enqueue(new Callback<WeatherFiveDayList>() {
@@ -83,24 +87,36 @@ public class StationsInteractorImpl implements StationsInteractor {
                     @Override
                     public void run() {
 
-                        response.body().save();
-
-
                         Log.d("RRR", "City : " + response.body().getCity().getName());
                         Log.d("RRR", "Lat : " + response.body().getCity().getCoord().getLat());
 
-                        WeatherCityDto dto = new WeatherCityDto();
-                        dto.cityId = response.body().getCity().getId();
+                        WeatherCityDto dto = WeatherCityDto.findById(response.body().getCity().getId());
+                        if (dto == null) {
+                            dto = new WeatherCityDto();
+                            dto.cityId = response.body().getCity().getId();
+                        }
+
                         dto.name = response.body().getCity().getName();
                         dto.lat = response.body().getCity().getCoord().getLat();
                         dto.lon = response.body().getCity().getCoord().getLon();
                         dto.timeUpdate = System.currentTimeMillis();
+                        dto.save();
+
+                        UserPrefs prefs = UserPrefs.getPrefs();
+                        prefs.cityId = dto.cityId;
+                        prefs.save();
 
                         List<WeatherForcastDto> list = new ArrayList<>();
 
-                        for (WeatherFiveDayList.WeatherUpdate w : response.body().getWeatherUpdateList()){
-                            WeatherForcastDto weather = new WeatherForcastDto();
-                            weather.cityDto = dto;
+                        for (WeatherFiveDayList.WeatherUpdate w : response.body().getWeatherUpdateList()) {
+                            WeatherForcastDto weather = WeatherForcastDto.findByTimeAndCity(w.getDate(), dto.cityId);
+
+                            if (weather == null) {
+                                weather = new WeatherForcastDto();
+                                weather.cityId = dto.cityId;
+                                weather.time = w.getDate();
+                            }
+
                             weather.description = w.getWeatherIcons().get(0).getDescription();
                             weather.icon = w.getWeatherIcons().get(0).getIcon();
 
@@ -108,9 +124,17 @@ public class StationsInteractorImpl implements StationsInteractor {
                             weather.temp_max = w.getMain().getTemp_max();
                             weather.temp_min = w.getMain().getTemp_min();
 
-                            weather.time = w.getDate();
-
                             list.add(weather);
+                        }
+
+                        ActiveAndroid.beginTransaction();
+                        try {
+                            for (WeatherForcastDto m : list) {
+                                m.save();
+                            }
+                            ActiveAndroid.setTransactionSuccessful();
+                        } finally {
+                            ActiveAndroid.endTransaction();
                         }
 
                         listener.onComplete(list);
@@ -131,6 +155,18 @@ public class StationsInteractorImpl implements StationsInteractor {
 
     @Override
     public List<WeatherForcastDto> loadDataFromDB() {
+        UserPrefs prefs = UserPrefs.getPrefs();
+
+        if (prefs.cityId.equals("")){
+            return null;
+        }
+
+        WeatherCityDto dto = WeatherCityDto.findById(prefs.cityId);
+        if (dto != null) {
+            List<WeatherForcastDto> list = WeatherForcastDto.findByCity(dto.cityId);
+            return list;
+        }
+
         return null;
     }
 }
