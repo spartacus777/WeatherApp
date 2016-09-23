@@ -7,7 +7,10 @@ import com.activeandroid.ActiveAndroid;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import kizema.anton.weatherapp.helpers.FahrenheitToCelsius;
 
 public class WeatherFiveDayList {
 
@@ -218,15 +221,24 @@ public class WeatherFiveDayList {
             if (weather == null) {
                 weather = new WeatherForcastDto();
                 weather.cityId = dto.cityId;
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(w.getDate() * 1000);
+
+                weather.dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                weather.monthOfYear = 1+cal.get(Calendar.MONTH);
+                weather.year = cal.get(Calendar.YEAR);
+                weather.hour = cal.get(Calendar.HOUR_OF_DAY);
+                weather.minute = cal.get(Calendar.MINUTE);
                 weather.time = w.getDate();
             }
 
             weather.description = w.getWeatherIcons().get(0).getDescription();
             weather.icon = w.getWeatherIcons().get(0).getIcon();
 
-            weather.temp = w.getMain().getTemp();
-            weather.temp_max = w.getMain().getTemp_max();
-            weather.temp_min = w.getMain().getTemp_min();
+            weather.temp = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp());
+            weather.temp_max = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp_max());
+            weather.temp_min = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp_min());
 
             list.add(weather);
         }

@@ -16,13 +16,12 @@
     <RelativeLayout
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
         android:layout_height="60dp">
 
         <ImageView
             android:id="@+id/ivIcon"
             android:scaleType="fitCenter"
+            android:layout_centerHorizontal="true"
             android:layout_width="60dp"
             android:layout_height="60dp" />
 

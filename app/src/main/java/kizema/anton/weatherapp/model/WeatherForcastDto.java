@@ -17,14 +17,29 @@ public class WeatherForcastDto extends Model {
     @Column(name = "time")
     public long time;
 
+    @Column(name = "dayOfMonth")
+    public int dayOfMonth;
+
+    @Column(name = "monthOfYear")
+    public int monthOfYear;
+
+    @Column(name = "year")
+    public int year;
+
+    @Column(name = "hour")
+    public int hour;
+
+    @Column(name = "minute")
+    public int minute;
+
     @Column(name = "temp")
-    public double temp;
+    public int temp;
 
     @Column(name = "temp_min")
-    public double temp_min;
+    public int temp_min;
 
     @Column(name = "temp_max")
-    public double temp_max;
+    public int temp_max;
 
     @Column(name = "icon")
     public String icon;

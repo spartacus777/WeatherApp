@@ -65,7 +65,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         WeatherForcastDto model = stationList.get(position);
 
         ImageLoader.getInstance().displayImage(model.getIconUrl(), holder.ivIcon, App.defOpts);
-        holder.tvTime.setText(""+model.time);
+        holder.tvTime.setText(""+model.dayOfMonth + "/" +model.monthOfYear + "/" + model.year
+                + " " + model.hour + ":"+model.minute);
         holder.tvDescr.setText(model.description);
         holder.tvMinMax.setText(model.temp_min + "/" + model.temp_max);
     }
