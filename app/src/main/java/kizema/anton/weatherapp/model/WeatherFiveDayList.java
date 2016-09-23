@@ -1,8 +1,12 @@
 package kizema.anton.weatherapp.model;
 
 
+import android.util.Log;
+
+import com.activeandroid.ActiveAndroid;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherFiveDayList {
@@ -29,7 +33,7 @@ public class WeatherFiveDayList {
         this.city = city;
     }
 
-    public static class WeatherIcon{
+    public static class WeatherIcon {
 
         @SerializedName("icon")
         private String icon;
@@ -54,7 +58,7 @@ public class WeatherFiveDayList {
         }
     }
 
-    public static class WeatherUpdate{
+    public static class WeatherUpdate {
 
         @SerializedName("dt")
         private long date;
@@ -90,7 +94,7 @@ public class WeatherFiveDayList {
         }
     }
 
-    public static class Main{
+    public static class Main {
 
         @SerializedName("temp")
         private double temp;
@@ -161,7 +165,7 @@ public class WeatherFiveDayList {
         }
     }
 
-    public static class Coordinates{
+    public static class Coordinates {
         @SerializedName("lon")
         private double lon;
 
@@ -183,6 +187,61 @@ public class WeatherFiveDayList {
         public void setLat(double lat) {
             this.lat = lat;
         }
+    }
+
+
+    public static List<WeatherForcastDto> getWeatherForcastDtos(WeatherFiveDayList weatherFiveDayList) {
+        Log.d("RRR", "City : " + weatherFiveDayList.getCity().getName());
+        Log.d("RRR", "Lat : " + weatherFiveDayList.getCity().getCoord().getLat());
+
+        WeatherCityDto dto = WeatherCityDto.findById(weatherFiveDayList.getCity().getId());
+        if (dto == null) {
+            dto = new WeatherCityDto();
+            dto.cityId = weatherFiveDayList.getCity().getId();
+        }
+
+        dto.name = weatherFiveDayList.getCity().getName();
+        dto.lat = weatherFiveDayList.getCity().getCoord().getLat();
+        dto.lon = weatherFiveDayList.getCity().getCoord().getLon();
+        dto.timeUpdate = System.currentTimeMillis();
+        dto.save();
+
+        UserPrefs prefs = UserPrefs.getPrefs();
+        prefs.cityId = dto.cityId;
+        prefs.save();
+
+        List<WeatherForcastDto> list = new ArrayList<>();
+
+        for (WeatherFiveDayList.WeatherUpdate w : weatherFiveDayList.getWeatherUpdateList()) {
+            WeatherForcastDto weather = WeatherForcastDto.findByTimeAndCity(w.getDate(), dto.cityId);
+
+            if (weather == null) {
+                weather = new WeatherForcastDto();
+                weather.cityId = dto.cityId;
+                weather.time = w.getDate();
+            }
+
+            weather.description = w.getWeatherIcons().get(0).getDescription();
+            weather.icon = w.getWeatherIcons().get(0).getIcon();
+
+            weather.temp = w.getMain().getTemp();
+            weather.temp_max = w.getMain().getTemp_max();
+            weather.temp_min = w.getMain().getTemp_min();
+
+            list.add(weather);
+        }
+
+        ActiveAndroid.beginTransaction();
+        try {
+            for (WeatherForcastDto m : list) {
+                m.save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+
+        return list;
     }
 
 }

@@ -1,12 +1,8 @@
 package kizema.anton.weatherapp.activities.stations;
 
-import android.os.Handler;
 import android.util.Log;
 
-import com.activeandroid.ActiveAndroid;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +43,6 @@ public class StationsInteractorImpl implements StationsInteractor {
                         .addQueryParameter("appid", ApiConstants.WEATHER_APP_ID)
                         .build();
 
-                // Request customization: add request headers
                 Request.Builder requestBuilder = original.newBuilder()
                         .url(url);
 
@@ -80,68 +75,8 @@ public class StationsInteractorImpl implements StationsInteractor {
             @Override
             public void onResponse(Call<WeatherFiveDayList> call, final Response<WeatherFiveDayList> response) {
 
-                /**
-                 * TODO remove - emulating long-timed job
-                 */
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Log.d("RRR", "City : " + response.body().getCity().getName());
-                        Log.d("RRR", "Lat : " + response.body().getCity().getCoord().getLat());
-
-                        WeatherCityDto dto = WeatherCityDto.findById(response.body().getCity().getId());
-                        if (dto == null) {
-                            dto = new WeatherCityDto();
-                            dto.cityId = response.body().getCity().getId();
-                        }
-
-                        dto.name = response.body().getCity().getName();
-                        dto.lat = response.body().getCity().getCoord().getLat();
-                        dto.lon = response.body().getCity().getCoord().getLon();
-                        dto.timeUpdate = System.currentTimeMillis();
-                        dto.save();
-
-                        UserPrefs prefs = UserPrefs.getPrefs();
-                        prefs.cityId = dto.cityId;
-                        prefs.save();
-
-                        List<WeatherForcastDto> list = new ArrayList<>();
-
-                        for (WeatherFiveDayList.WeatherUpdate w : response.body().getWeatherUpdateList()) {
-                            WeatherForcastDto weather = WeatherForcastDto.findByTimeAndCity(w.getDate(), dto.cityId);
-
-                            if (weather == null) {
-                                weather = new WeatherForcastDto();
-                                weather.cityId = dto.cityId;
-                                weather.time = w.getDate();
-                            }
-
-                            weather.description = w.getWeatherIcons().get(0).getDescription();
-                            weather.icon = w.getWeatherIcons().get(0).getIcon();
-
-                            weather.temp = w.getMain().getTemp();
-                            weather.temp_max = w.getMain().getTemp_max();
-                            weather.temp_min = w.getMain().getTemp_min();
-
-                            list.add(weather);
-                        }
-
-                        ActiveAndroid.beginTransaction();
-                        try {
-                            for (WeatherForcastDto m : list) {
-                                m.save();
-                            }
-                            ActiveAndroid.setTransactionSuccessful();
-                        } finally {
-                            ActiveAndroid.endTransaction();
-                        }
-
-                        listener.onComplete(list);
-                        Log.d("RRR", "Loaded");
-                    }
-                }, 2000);
-
+                List<WeatherForcastDto> list = WeatherFiveDayList.getWeatherForcastDtos(response.body());
+                listener.onComplete(list);
             }
 
             @Override
@@ -157,7 +92,7 @@ public class StationsInteractorImpl implements StationsInteractor {
     public List<WeatherForcastDto> loadDataFromDB() {
         UserPrefs prefs = UserPrefs.getPrefs();
 
-        if (prefs.cityId.equals("")){
+        if (prefs.cityId.equals("")) {
             return null;
         }
 

@@ -32,6 +32,10 @@ public class WeatherForcastDto extends Model {
     @Column(name = "description")
     public String description;
 
+    public String getIconUrl(){
+        return "http://openweathermap.org/img/w/" + icon + ".png";
+    }
+
     public static WeatherForcastDto findByTimeAndCity(long time, String cityId){
         return new Select().from(WeatherForcastDto.class).where("cityId = ?", cityId).where("time = ?", time).executeSingle();
     }

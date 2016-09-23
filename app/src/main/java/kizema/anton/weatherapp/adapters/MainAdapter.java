@@ -1,17 +1,23 @@
 package kizema.anton.weatherapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import kizema.anton.weatherapp.App;
+import kizema.anton.weatherapp.R;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.BaseViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private List<WeatherForcastDto> stationList;
 
@@ -20,44 +26,48 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.BaseViewHolder
         notifyDataSetChanged();
     }
 
-
     public MainAdapter() {}
 
-    public void setData(List<WeatherForcastDto> busModels){
+    public void setData(List<WeatherForcastDto> busModels) {
         this.stationList = busModels;
         notifyDataSetChanged();
     }
 
-    public static class BaseViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvTitle, tvId;
+        @BindView(R.id.tvTime)
+        public TextView tvTime;
 
-        public BaseViewHolder(View itemView) {
+        @BindView(R.id.tvDescr)
+        public TextView tvDescr;
+
+        @BindView(R.id.tvMinMax)
+        public TextView tvMinMax;
+
+        @BindView(R.id.ivIcon)
+        public ImageView ivIcon;
+
+        public ViewHolder(View itemView) {
             super(itemView);
-
-            this.tvTitle = (TextView) itemView;
+            ButterKnife.bind(this, itemView);
         }
     }
 
-
     @Override
-    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView tv = new TextView(parent.getContext());
-        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams
-                (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        p.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        tv.setLayoutParams(p);
-//        tv.setPadding(UIHelper.getPixel(60), UIHelper.getPixel(20), UIHelper.getPixel(60), UIHelper.getPixel(20));
-        tv.setGravity(Gravity.CENTER);
-
-        return new BaseViewHolder(tv);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View parentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
+        return new ViewHolder(parentView);
     }
 
     @Override
-    public void onBindViewHolder(final BaseViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         WeatherForcastDto model = stationList.get(position);
-        holder.tvTitle.setText(model.time + " : " + model.description);
+
+        ImageLoader.getInstance().displayImage(model.getIconUrl(), holder.ivIcon, App.defOpts);
+        holder.tvTime.setText(""+model.time);
+        holder.tvDescr.setText(model.description);
+        holder.tvMinMax.setText(model.temp_min + "/" + model.temp_max);
     }
 
     @Override
