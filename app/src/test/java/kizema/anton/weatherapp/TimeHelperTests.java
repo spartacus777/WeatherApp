@@ -9,8 +9,7 @@ import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 import static org.junit.Assert.assertTrue;
 
-
-public class HelperTests {
+public class TimeHelperTests {
 
     WeatherForcastDto sampleWeatherDto1;
     WeatherForcastDto sampleWeatherDto2;

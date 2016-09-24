@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import kizema.anton.weatherapp.helpers.FahrenheitToCelsius;
+import kizema.anton.weatherapp.helpers.TemperatureHelper;
 
 public class WeatherFiveDayList {
 
@@ -236,9 +236,9 @@ public class WeatherFiveDayList {
             weather.description = w.getWeatherIcons().get(0).getDescription();
             weather.icon = w.getWeatherIcons().get(0).getIcon();
 
-            weather.temp = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp());
-            weather.temp_max = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp_max());
-            weather.temp_min = FahrenheitToCelsius.kelvinToCelsius(w.getMain().getTemp_min());
+            weather.temp = TemperatureHelper.kelvinToCelsius(w.getMain().getTemp());
+            weather.temp_max = TemperatureHelper.kelvinToCelsius(w.getMain().getTemp_max());
+            weather.temp_min = TemperatureHelper.kelvinToCelsius(w.getMain().getTemp_min());
 
             list.add(weather);
         }
