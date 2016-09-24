@@ -17,17 +17,28 @@ import android.os.Message;
 import android.os.Process;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import kizema.anton.weatherapp.App;
+import kizema.anton.weatherapp.BuildConfig;
+import kizema.anton.weatherapp.control.AppConstants;
 import kizema.anton.weatherapp.model.UserPrefs;
 
-public class GPSTrackerService extends Service implements LocationListener {
+public class TrackerService extends Service implements LocationListener {
 
     private Location location;
 
-    private static final long MIN_DISTANCE_UPDATES = 1;//1 km
-    private static final long MIN_TIME = 1000;
+    private static final long MIN_DISTANCE_UPDATES = 10000;//10 km
+    private static long MIN_TIME = 1000;
+
+    static {
+        if (BuildConfig.DEBUG){
+            MIN_TIME = 1000;
+        } else {
+            MIN_TIME = 1000 * 60 * 60;
+        }
+    }
 
     protected LocationManager locationManager;
 
@@ -41,12 +52,7 @@ public class GPSTrackerService extends Service implements LocationListener {
         }
         @Override
         public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
             startWork();
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-//            stopSelf(msg.arg1);
         }
     }
 
@@ -63,16 +69,12 @@ public class GPSTrackerService extends Service implements LocationListener {
         mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
-    private int startId;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("LOC", "onStartCommand " + startId);
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
         mServiceHandler.sendMessage(msg);
-
-        this.startId = startId;
 
         // If we get killed, after returning from here, restart
         return START_REDELIVER_INTENT;
@@ -123,18 +125,18 @@ public class GPSTrackerService extends Service implements LocationListener {
     }
 
     private void stopUsingGPS() {
-        Log.d("LOC", "stopUsingGPS() ");
-        if (locationManager != null) {
-            locationManager.removeUpdates(GPSTrackerService.this);
-            locationManager = null;
-        }
-
-        App.uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                stopSelf(startId);
-            }
-        });
+//        Log.d("LOC", "stopUsingGPS() ");
+//        if (locationManager != null) {
+//            locationManager.removeUpdates(TrackerService.this);
+//            locationManager = null;
+//        }
+//
+//        App.uiHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                stopSelf();
+//            }
+//        });
     }
 
     @Override
@@ -157,7 +159,8 @@ public class GPSTrackerService extends Service implements LocationListener {
                 prefs.lon = location.getLongitude();
                 prefs.save();
 
-                //send updated location broadcast
+                Intent intent = new Intent(AppConstants.UPDATE_COORD_SIGNAL);
+                LocalBroadcastManager.getInstance(TrackerService.this).sendBroadcast(intent);
             }
         });
 

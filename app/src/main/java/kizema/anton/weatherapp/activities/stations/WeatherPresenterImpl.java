@@ -7,7 +7,7 @@ import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class WeatherPresenterImpl implements WeatherPresenter {
 
-    private WeatherView podactView;
+    private WeatherView weatherView;
 
     private WeatherInteractor weatherInteractor;
 
@@ -20,7 +20,7 @@ public class WeatherPresenterImpl implements WeatherPresenter {
 
     @Override
     public void setView(WeatherView podactView) {
-        this.podactView = podactView;
+        this.weatherView = podactView;
 
         UserPrefs prefs = UserPrefs.getPrefs();
         if (prefs.hasLatLon()){
@@ -50,36 +50,41 @@ public class WeatherPresenterImpl implements WeatherPresenter {
 
     @Override
     public void removeView(WeatherView podactView) {
-        if (podactView == this.podactView){
-            this.podactView = null;
+        if (podactView == this.weatherView){
+            this.weatherView = null;
         }
+    }
+
+    @Override
+    public void coordinatesUpdated() {
+        load();
     }
 
     private void loadFromDB(){
         List<WeatherForcastDto> list = weatherInteractor.loadDataFromDB();
 
         if (list != null) {
-            podactView.setData(list);
+            weatherView.setData(list);
         }
     }
 
     private void load() {
 
-        if (loadDataIsInProgress){
-            return;
-        }
+//        if (loadDataIsInProgress){
+//            return;
+//        }
 
         loadDataIsInProgress = true;
         weatherInteractor.loadData(new WeatherInteractor.OnCompletion() {
             @Override
             public void onComplete(List<WeatherForcastDto> list) {
-                podactView.setData(list);
+                weatherView.setData(list);
                 loadDataIsInProgress = false;
             }
 
             @Override
             public void onError() {
-                podactView.showError();
+                weatherView.showError();
                 loadDataIsInProgress = false;
             }
         });

@@ -19,6 +19,9 @@ public class WeatherInteractorImpl implements WeatherInteractor {
 
     public WeatherInteractorImpl() {}
 
+
+    private Call<WeatherFiveDayList> call;
+
     @Override
     public void loadData(final OnCompletion listener) {
 
@@ -29,11 +32,14 @@ public class WeatherInteractorImpl implements WeatherInteractor {
         data.put("lon", "" + prefs.lon);
         data.put("lat", "" + prefs.lat);
 
-        Call<WeatherFiveDayList> call = HttpControler.getInstance().getApiService().getFiveDayForecast(data);
+        if (call != null){
+            call.cancel();
+        }
+
+        call = HttpControler.getInstance().getApiService().getFiveDayForecast(data);
         call.enqueue(new Callback<WeatherFiveDayList>() {
             @Override
             public void onResponse(Call<WeatherFiveDayList> call, final Response<WeatherFiveDayList> response) {
-
                 WeatherFiveDayList weatherFiveDayList = response.body();
 
                 if (weatherFiveDayList != null && weatherFiveDayList.getCity() != null &&
@@ -47,15 +53,22 @@ public class WeatherInteractorImpl implements WeatherInteractor {
                     Log.e("RRR", "  response.body() == null ");
                     listener.onError();
                 }
+
+                call = null;
             }
 
             @Override
             public void onFailure(Call<WeatherFiveDayList> call, Throwable t) {
                 Log.d("RR", t + call.toString());
 
-                listener.onError();
+                if (!call.isCanceled()){
+                    listener.onError();
+                }
+
+                call = null;
             }
         });
+
     }
 
     @Override

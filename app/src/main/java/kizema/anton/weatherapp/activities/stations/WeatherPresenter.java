@@ -8,4 +8,6 @@ public interface WeatherPresenter extends Serializable{
     void setView(WeatherView podactView);
 
     void removeView(WeatherView podactView);
+
+    void coordinatesUpdated();
 }

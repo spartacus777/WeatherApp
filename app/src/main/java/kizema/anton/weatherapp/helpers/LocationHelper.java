@@ -11,7 +11,7 @@ public class LocationHelper {
     public static void getRealCoordinates(Context context) {
         Log.d("LOC", "getRealCoordinates");
 
-        Intent intent = new Intent(context, GPSTrackerService.class);
+        Intent intent = new Intent(context, TrackerService.class);
         context.startService(intent);
     }
 
