@@ -23,7 +23,7 @@
             ${applicationId}.model.UserPrefs,
             ${applicationId}.model.WeatherForcastDto"/>
 
-        <activity android:name="kizema.anton.weatherapp.activities.stations.StationsListActivity">
+        <activity android:name=".activities.stations.WeatherListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -4,15 +4,15 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.robotium.solo.Solo;
 
-import kizema.anton.weatherapp.activities.stations.StationsListActivity;
+import kizema.anton.weatherapp.activities.stations.WeatherListActivity;
 
 public class SimpleRobotiumTest extends
-        ActivityInstrumentationTestCase2<StationsListActivity> {
+        ActivityInstrumentationTestCase2<WeatherListActivity> {
 
     private Solo solo;
 
     public SimpleRobotiumTest() {
-        super(StationsListActivity.class);
+        super(WeatherListActivity.class);
     }
 
     public void setUp() throws Exception {
@@ -21,7 +21,7 @@ public class SimpleRobotiumTest extends
 
     public void testListItemClickShouldDisplayToast() throws Exception {
         // check that we have the right activity
-        solo.assertCurrentActivity("wrong activity", StationsListActivity.class);
+        solo.assertCurrentActivity("wrong activity", WeatherListActivity.class);
 
         // Click a button which will start a new Activity
         // Here we use the ID of the string to find the right button

@@ -4,7 +4,7 @@ import java.util.List;
 
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public interface StationsView {
+public interface WeatherView {
 
     void setData(List<WeatherForcastDto> list);
 

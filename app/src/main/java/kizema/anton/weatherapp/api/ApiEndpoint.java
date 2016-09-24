@@ -10,7 +10,7 @@ import retrofit2.http.QueryMap;
 public interface ApiEndpoint {
 
     @GET("/data/2.5/forecast")
-    Call<WeatherFiveDayList> getFiveDayForcast(
+    Call<WeatherFiveDayList> getFiveDayForecast(
             @QueryMap Map<String, String> options
     );
 

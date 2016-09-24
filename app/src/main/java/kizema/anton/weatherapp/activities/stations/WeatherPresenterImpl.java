@@ -6,21 +6,21 @@ import kizema.anton.weatherapp.helpers.LocationHelper;
 import kizema.anton.weatherapp.model.UserPrefs;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public class StationsPresenterImpl implements StationsPresenter {
+public class WeatherPresenterImpl implements WeatherPresenter {
 
-    private StationsView podactView;
+    private WeatherView podactView;
 
-    private StationsInteractor stationsInteractor;
+    private WeatherInteractor weatherInteractor;
 
     private boolean loadDataIsInProgress = false;
     private boolean firstTime = true;
 
-    public StationsPresenterImpl(StationsInteractor stationsInteractor) {
-        this.stationsInteractor = stationsInteractor;
+    public WeatherPresenterImpl(WeatherInteractor weatherInteractor) {
+        this.weatherInteractor = weatherInteractor;
     }
 
     @Override
-    public void setView(StationsView podactView) {
+    public void setView(WeatherView podactView) {
         this.podactView = podactView;
 
         UserPrefs prefs = UserPrefs.getPrefs();
@@ -50,14 +50,14 @@ public class StationsPresenterImpl implements StationsPresenter {
     }
 
     @Override
-    public void removeView(StationsView podactView) {
+    public void removeView(WeatherView podactView) {
         if (podactView == this.podactView){
             this.podactView = null;
         }
     }
 
     private void loadFromDB(){
-        List<WeatherForcastDto> list = stationsInteractor.loadDataFromDB();
+        List<WeatherForcastDto> list = weatherInteractor.loadDataFromDB();
         podactView.setData(list);
     }
 
@@ -68,7 +68,7 @@ public class StationsPresenterImpl implements StationsPresenter {
         }
 
         loadDataIsInProgress = true;
-        stationsInteractor.loadData(new StationsInteractor.OnCompletion() {
+        weatherInteractor.loadData(new WeatherInteractor.OnCompletion() {
             @Override
             public void onComplete(List<WeatherForcastDto> list) {
                 podactView.setData(list);

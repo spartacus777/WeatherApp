@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
-import kizema.anton.weatherapp.activities.stations.StationsListActivity;
+import kizema.anton.weatherapp.activities.stations.WeatherListActivity;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +19,7 @@ public class SimpleRobolectricTest {
 
     @Test
     public void clickingButton_shouldChangeResultsViewText() throws Exception {
-        StationsListActivity activity = Robolectric.setupActivity(StationsListActivity.class);
+        WeatherListActivity activity = Robolectric.setupActivity(WeatherListActivity.class);
 
         RecyclerView rv = (RecyclerView) activity.findViewById(R.id.rvPodcasts);
         final ProgressBar pb = (ProgressBar) activity.findViewById(R.id.loading);

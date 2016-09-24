@@ -4,7 +4,7 @@ import java.util.List;
 
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public interface StationsInteractor {
+public interface WeatherInteractor {
 
     interface OnCompletion{
         void onComplete(List<WeatherForcastDto> list);

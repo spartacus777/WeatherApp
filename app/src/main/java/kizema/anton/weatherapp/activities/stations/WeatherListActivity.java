@@ -17,12 +17,9 @@ import kizema.anton.weatherapp.R;
 import kizema.anton.weatherapp.adapters.ViewPagerAdapter;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public class StationsListActivity extends AppCompatActivity implements StationsView {
+public class WeatherListActivity extends AppCompatActivity implements WeatherView {
 
-    private static final String PRESENTER_STR = "wefwefd";
-
-//    @BindView(R.id.rvPodcasts)
-//    public RecyclerView rvStations;
+    private static final String PRESENTER_STR = "presenterSaveStr";
 
     @BindView(R.id.loading)
     public ProgressBar loading;
@@ -33,7 +30,7 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
     @BindView(R.id.ptTabStrip)
     public PagerTabStrip ptTabStrip;
 
-    private StationsPresenter stationsPresenter;
+    private WeatherPresenter weatherPresenter;
 
     private ViewPagerAdapter viewPagerAdapter;
 
@@ -51,12 +48,12 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
     protected void onDestroy() {
         super.onDestroy();
 
-        stationsPresenter.removeView(this);
+        weatherPresenter.removeView(this);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(PRESENTER_STR, stationsPresenter);
+        outState.putSerializable(PRESENTER_STR, weatherPresenter);
         super.onSaveInstanceState(outState);
     }
 
@@ -77,47 +74,28 @@ public class StationsListActivity extends AppCompatActivity implements StationsV
                 }
             }
         });
-
-//        rvStations.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        adapter = new MainAdapter();
-//        rvStations.setAdapter(adapter);
-//        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onChanged() {
-//                super.onChanged();
-//
-//                if (adapter.getItemCount() == 0){
-//                    loading.setVisibility(View.VISIBLE);
-//                } else {
-//                    loading.setVisibility(View.GONE);
-//                }
-//            }
-//        });
-
-
     }
 
     private void initPresenter(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            stationsPresenter = (StationsPresenter) savedInstanceState.getSerializable(PRESENTER_STR);
+            weatherPresenter = (WeatherPresenter) savedInstanceState.getSerializable(PRESENTER_STR);
         }
 
-        if (stationsPresenter == null) {
-            stationsPresenter = new StationsPresenterImpl(new StationsInteractorImpl());
+        if (weatherPresenter == null) {
+            weatherPresenter = new WeatherPresenterImpl(new WeatherInteractorImpl());
         }
 
-        stationsPresenter.setView(this);
+        weatherPresenter.setView(this);
     }
 
     @Override
     public void setData(List<WeatherForcastDto> list) {
-//        adapter.setData(list);
         viewPagerAdapter.setList(list);
     }
 
     @Override
     public void showError() {
-        Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "No internet", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -1,8 +1,6 @@
 package kizema.anton.weatherapp.model;
 
 
-import android.util.Log;
-
 import com.activeandroid.ActiveAndroid;
 import com.google.gson.annotations.SerializedName;
 
@@ -194,8 +192,8 @@ public class WeatherFiveDayList {
 
 
     public static List<WeatherForcastDto> getWeatherForcastDtos(WeatherFiveDayList weatherFiveDayList) {
-        Log.d("RRR", "City : " + weatherFiveDayList.getCity().getName());
-        Log.d("RRR", "Lat : " + weatherFiveDayList.getCity().getCoord().getLat());
+//        Log.d("RRR", "City : " + weatherFiveDayList.getCity().getName());
+//        Log.d("RRR", "Lat : " + weatherFiveDayList.getCity().getCoord().getLat());
 
         WeatherCityDto dto = WeatherCityDto.findById(weatherFiveDayList.getCity().getId());
         if (dto == null) {
