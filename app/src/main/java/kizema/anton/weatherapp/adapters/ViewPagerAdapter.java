@@ -95,12 +95,10 @@ public class ViewPagerAdapter extends PagerAdapter {
         public RecyclerView recyclerView;
 
         private MainAdapter adapter;
-        private int position;
 
-        public ViewHolder(View itemView, int position){
+        public ViewHolder(View itemView){
             ButterKnife.bind(this, itemView);
 
-            this.position = position;
             recyclerView.setLayoutManager(new LinearLayoutManager(
                     recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
 
@@ -118,7 +116,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup collection, int position) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.frame_layout_cntrl, collection, false);
 
-        ViewHolder h = new ViewHolder(view, position);
+        ViewHolder h = new ViewHolder(view);
         holders.put(position, h);
 
         List<WeatherForcastDto> sub = map.get(keyDay.get(position));
