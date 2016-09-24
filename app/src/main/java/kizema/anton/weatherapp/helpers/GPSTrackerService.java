@@ -31,7 +31,6 @@ public class GPSTrackerService extends Service implements LocationListener {
 
     protected LocationManager locationManager;
 
-
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
 
@@ -51,7 +50,6 @@ public class GPSTrackerService extends Service implements LocationListener {
         }
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -65,6 +63,8 @@ public class GPSTrackerService extends Service implements LocationListener {
         mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
+    private int startId;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("LOC", "onStartCommand " + startId);
@@ -72,8 +72,10 @@ public class GPSTrackerService extends Service implements LocationListener {
         msg.arg1 = startId;
         mServiceHandler.sendMessage(msg);
 
+        this.startId = startId;
+
         // If we get killed, after returning from here, restart
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     private Location startWork() {
@@ -127,7 +129,17 @@ public class GPSTrackerService extends Service implements LocationListener {
             locationManager = null;
         }
 
-        stopSelf();
+        App.uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                stopSelf(startId);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("LOC", "onDestroy() ");
     }
 
     @Override

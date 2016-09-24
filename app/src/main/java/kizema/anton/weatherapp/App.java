@@ -2,6 +2,7 @@ package kizema.anton.weatherapp;
 
 import android.app.Application;
 import android.os.Handler;
+import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.squareup.leakcanary.LeakCanary;
@@ -16,6 +17,7 @@ public class App extends Application {
     @Override public void onCreate() {
         super.onCreate();
 
+        Log.d("LOC", "onCreate");
         LocationHelper.getRealCoordinates(getApplicationContext());
 
         ActiveAndroid.initialize(getApplicationContext());
@@ -25,6 +27,7 @@ public class App extends Application {
 
         uiHandler = new Handler();
     }
+
 
 
 
