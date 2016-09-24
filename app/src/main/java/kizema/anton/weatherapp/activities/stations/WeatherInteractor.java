@@ -14,4 +14,6 @@ public interface WeatherInteractor {
     void loadData(OnCompletion listener);
 
     List<WeatherForcastDto> loadDataFromDB();
+
+    boolean shouldLoadFromLocalDb();
 }

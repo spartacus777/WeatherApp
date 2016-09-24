@@ -2,7 +2,6 @@ package kizema.anton.weatherapp.activities.stations;
 
 import java.util.List;
 
-import kizema.anton.weatherapp.model.UserPrefs;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class WeatherPresenterImpl implements WeatherPresenter {
@@ -11,7 +10,6 @@ public class WeatherPresenterImpl implements WeatherPresenter {
 
     private WeatherInteractor weatherInteractor;
 
-    private boolean loadDataIsInProgress = false;
     private boolean firstTime = true;
 
     public WeatherPresenterImpl(WeatherInteractor weatherInteractor) {
@@ -19,23 +17,11 @@ public class WeatherPresenterImpl implements WeatherPresenter {
     }
 
     @Override
-    public void setView(WeatherView podactView) {
-        this.weatherView = podactView;
+    public void setView(WeatherView weatherView) {
+        this.weatherView = weatherView;
 
-        UserPrefs prefs = UserPrefs.getPrefs();
-        if (prefs.hasLatLon()){
+        if (weatherInteractor.shouldLoadFromLocalDb()){
             loadData();
-        } else {
-//            LocationHelper.getRealCoordinates(new LocationHelper.OmLocationReceived() {
-//                @Override
-//                public void onReceivedLocation(double lat, double lon) {
-//                    UserPrefs prefs = UserPrefs.getPrefs();
-//                    prefs.lon = lon;
-//                    prefs.lat = lat;
-//                    prefs.save();
-//                    loadData();
-//                }
-//            });
         }
     }
 
@@ -49,8 +35,8 @@ public class WeatherPresenterImpl implements WeatherPresenter {
     }
 
     @Override
-    public void removeView(WeatherView podactView) {
-        if (podactView == this.weatherView){
+    public void removeView(WeatherView weatherView) {
+        if (weatherView == this.weatherView){
             this.weatherView = null;
         }
     }
@@ -69,23 +55,15 @@ public class WeatherPresenterImpl implements WeatherPresenter {
     }
 
     private void load() {
-
-//        if (loadDataIsInProgress){
-//            return;
-//        }
-
-        loadDataIsInProgress = true;
         weatherInteractor.loadData(new WeatherInteractor.OnCompletion() {
             @Override
             public void onComplete(List<WeatherForcastDto> list) {
                 weatherView.setData(list);
-                loadDataIsInProgress = false;
             }
 
             @Override
             public void onError() {
                 weatherView.showError();
-                loadDataIsInProgress = false;
             }
         });
     }

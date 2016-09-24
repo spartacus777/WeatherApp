@@ -87,4 +87,10 @@ public class WeatherInteractorImpl implements WeatherInteractor {
 
         return null;
     }
+
+    @Override
+    public boolean shouldLoadFromLocalDb() {
+        UserPrefs prefs = UserPrefs.getPrefs();
+        return prefs.hasLatLon();
+    }
 }

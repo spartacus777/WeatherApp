@@ -56,6 +56,7 @@ public class WeatherForcastDto extends Model {
     }
 
     public static List<WeatherForcastDto> findByCity(String cityId){
-        return new Select().from(WeatherForcastDto.class).where("cityId = ?", cityId).execute();
+        return new Select().from(WeatherForcastDto.class).where("cityId = ?", cityId)
+                .where("time >= "+ System.currentTimeMillis()/1000).execute();
     }
 }
