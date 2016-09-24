@@ -23,12 +23,22 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private List<WeatherForcastDto> stationList;
 
+    private OnWeatherClickListener listener;
+
+    public interface OnWeatherClickListener{
+        void onWeatherClick(WeatherForcastDto dto);
+    }
+
     public MainAdapter(List<WeatherForcastDto> stationList) {
         this.stationList = stationList;
         notifyDataSetChanged();
     }
 
     public MainAdapter() {}
+
+    public void setOnWeatherClickListener(OnWeatherClickListener listener){
+        this.listener = listener;
+    }
 
     public void setData(List<WeatherForcastDto> busModels) {
         this.stationList = busModels;
@@ -64,12 +74,21 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        WeatherForcastDto model = stationList.get(position);
+        final WeatherForcastDto model = stationList.get(position);
 
         ImageLoader.getInstance().displayImage(model.getIconUrl(), holder.ivIcon, UILHelper.defOpts);
         holder.tvTime.setText(TimeHelper.getTime(model));
         holder.tvDescr.setText(model.description);
         holder.tvMinMax.setText(TemperatureHelper.getTemperatureString(model));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null){
+                    listener.onWeatherClick(model);
+                }
+            }
+        });
     }
 
     @Override

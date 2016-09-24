@@ -7,31 +7,33 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
-        android:name="kizema.anton.weatherapp.App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="AA_DB_NAME" android:value="Demo.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="1" />
-
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="Demo.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="${applicationId}.model.WeatherCityDto,
-            ${applicationId}.model.UserPrefs,
-            ${applicationId}.model.WeatherForcastDto"/>
+            android:value="${applicationId}.model.WeatherCityDto,             ${applicationId}.model.UserPrefs,             ${applicationId}.model.WeatherForcastDto" />
 
         <activity android:name=".activities.stations.WeatherListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service android:name=".helpers.TrackerService" />
 
+        <activity android:name=".activities.WeatherDetailActivity"></activity>
     </application>
 
 </manifest>

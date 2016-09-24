@@ -20,6 +20,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kizema.anton.weatherapp.R;
+import kizema.anton.weatherapp.activities.WeatherDetailActivity;
+import kizema.anton.weatherapp.adapters.MainAdapter;
 import kizema.anton.weatherapp.adapters.ViewPagerAdapter;
 import kizema.anton.weatherapp.control.AppConstants;
 import kizema.anton.weatherapp.helpers.RetainedFragment;
@@ -27,7 +29,8 @@ import kizema.anton.weatherapp.model.UserPrefs;
 import kizema.anton.weatherapp.model.WeatherCityDto;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
-public class WeatherListActivity extends AppCompatActivity implements WeatherView {
+public class WeatherListActivity extends AppCompatActivity implements WeatherView,
+        MainAdapter.OnWeatherClickListener{
 
     private static final String PRESENTER_STR = "presenterSaveStr";
 
@@ -53,6 +56,7 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Log.d("LOC", "onCreate");
 
         init();
         initPresenter();
@@ -72,6 +76,8 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
 
         viewPagerAdapter = new ViewPagerAdapter(this);
         pager.setAdapter(viewPagerAdapter);
+
+        viewPagerAdapter.setListener(this);
 
         viewPagerAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -136,4 +142,11 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
         Toast.makeText(this, "No internet", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onWeatherClick(WeatherForcastDto dto) {
+        Intent intent = new Intent(this, WeatherDetailActivity.class);
+        intent.putExtra(WeatherDetailActivity.DTO_ID, dto.cityId);
+        intent.putExtra(WeatherDetailActivity.DTO_TIME, dto.time);
+        startActivity(intent);
+    }
 }

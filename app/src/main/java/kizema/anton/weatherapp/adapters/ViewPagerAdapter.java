@@ -27,11 +27,16 @@ public class ViewPagerAdapter extends PagerAdapter {
     private List<WeatherForcastDto> list;
     private Map<String, List<WeatherForcastDto>> map;
     private List<String> keyDay;
+    private MainAdapter.OnWeatherClickListener listener;
 
     private SparseArray<ViewHolder> holders = new SparseArray<>();
 
     public ViewPagerAdapter(Context ctx) {
         this.ctx = ctx;
+    }
+
+    public void setListener(MainAdapter.OnWeatherClickListener listener){
+        this.listener = listener;
     }
 
     public void setList(List<WeatherForcastDto> list) {
@@ -96,7 +101,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         private MainAdapter adapter;
 
-        public ViewHolder(View itemView){
+        public ViewHolder(View itemView, MainAdapter.OnWeatherClickListener listener){
             ButterKnife.bind(this, itemView);
 
             recyclerView.setLayoutManager(new LinearLayoutManager(
@@ -104,6 +109,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
 
             adapter = new MainAdapter();
+            adapter.setOnWeatherClickListener(listener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -116,7 +122,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup collection, int position) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.frame_layout_cntrl, collection, false);
 
-        ViewHolder h = new ViewHolder(view);
+        ViewHolder h = new ViewHolder(view, listener);
         holders.put(position, h);
 
         List<WeatherForcastDto> sub = map.get(keyDay.get(position));
