@@ -13,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.List;
@@ -32,8 +31,8 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
 
     private static final String PRESENTER_STR = "presenterSaveStr";
 
-    @BindView(R.id.loading)
-    public ProgressBar loading;
+    @BindView(R.id.llNoData)
+    public View llNoData;
 
     @BindView(R.id.pager)
     public ViewPager pager;
@@ -80,9 +79,9 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
                 super.onChanged();
 
                 if (viewPagerAdapter.getCount() == 0){
-                    loading.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.VISIBLE);
                 } else {
-                    loading.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.GONE);
                 }
             }
         });
