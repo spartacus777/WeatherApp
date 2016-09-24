@@ -9,16 +9,21 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-/**
- * Created by somename on 23.09.2016.
- */
-public class GPSTracker extends Service implements LocationListener {
+import kizema.anton.weatherapp.App;
+import kizema.anton.weatherapp.model.UserPrefs;
 
-    private final Context context;
+public class GPSTrackerService extends Service implements LocationListener {
+
     private Location location;
 
     private static final long MIN_DISTANCE_UPDATES = 1;//1 km
@@ -26,26 +31,56 @@ public class GPSTracker extends Service implements LocationListener {
 
     protected LocationManager locationManager;
 
-    private OnLocationChangedListener listener;
 
-    public interface OnLocationChangedListener {
-        void onLocationChanged(Location location);
+    private Looper mServiceLooper;
+    private ServiceHandler mServiceHandler;
+
+    // Handler that receives messages from the thread
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            // Normally we would do some work here, like download a file.
+            // For our sample, we just sleep for 5 seconds.
+            startWork();
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+//            stopSelf(msg.arg1);
+        }
     }
 
-    public GPSTracker(Context context) {
-        this.context = context;
-        calculateLocation();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        HandlerThread thread = new HandlerThread("ServiceStartArguments",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
-    public void setLocationChangeListener(OnLocationChangedListener listener) {
-        this.listener = listener;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("LOC", "onStartCommand " + startId);
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = startId;
+        mServiceHandler.sendMessage(msg);
+
+        // If we get killed, after returning from here, restart
+        return START_STICKY;
     }
 
-    public Location calculateLocation() {
+    private Location startWork() {
         Log.d("LOC", "calculateLocation");
 
-        locationManager = (LocationManager) context
-                .getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this
+                .getSystemService(Context.LOCATION_SERVICE);
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
             getLocationFromProvider(LocationManager.NETWORK_PROVIDER);
@@ -85,21 +120,37 @@ public class GPSTracker extends Service implements LocationListener {
         }
     }
 
-    public void stopUsingGPS() {
+    private void stopUsingGPS() {
         Log.d("LOC", "stopUsingGPS() ");
         if (locationManager != null) {
-            locationManager.removeUpdates(GPSTracker.this);
+            locationManager.removeUpdates(GPSTrackerService.this);
             locationManager = null;
         }
-    }
 
-    public Location getLocation() {
-        return location;
+        stopSelf();
     }
 
     @Override
     public void onLocationChanged(final Location location) {
         this.location = location;
+
+        Log.d("LOC", "Appeared location : newLat: " + location.getLatitude() +
+                "  ; newLon: " + location.getLongitude());
+
+        App.uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                UserPrefs prefs = UserPrefs.getPrefs();
+                prefs.lat = location.getLatitude();
+                prefs.lon = location.getLongitude();
+                prefs.save();
+
+                //send updated location broadcast
+            }
+        });
+
+        //save and stop
+        stopUsingGPS();
     }
 
     @Override
@@ -120,12 +171,11 @@ public class GPSTracker extends Service implements LocationListener {
 
     }
 
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
         return null;
     }
-
 
     /**
      * Function to show settings alert dialog.
@@ -135,7 +185,7 @@ public class GPSTracker extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("GPS settings");
 
         // Setting Dialog Message
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");

@@ -31,6 +31,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     public void setList(List<WeatherForcastDto> list) {
         this.list = list;
+
         calculate();
         notifyDataSetChanged();
     }

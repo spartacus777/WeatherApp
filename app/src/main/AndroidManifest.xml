@@ -30,6 +30,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".helpers.GPSTrackerService" />
+
     </application>
 
 </manifest>

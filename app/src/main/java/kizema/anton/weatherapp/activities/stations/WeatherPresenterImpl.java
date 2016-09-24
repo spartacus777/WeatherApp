@@ -2,7 +2,6 @@ package kizema.anton.weatherapp.activities.stations;
 
 import java.util.List;
 
-import kizema.anton.weatherapp.helpers.LocationHelper;
 import kizema.anton.weatherapp.model.UserPrefs;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
@@ -27,16 +26,16 @@ public class WeatherPresenterImpl implements WeatherPresenter {
         if (prefs.hasLatLon()){
             loadData();
         } else {
-            LocationHelper.getRealCoordinates(new LocationHelper.OmLocationReceived() {
-                @Override
-                public void onReceivedLocation(double lat, double lon) {
-                    UserPrefs prefs = UserPrefs.getPrefs();
-                    prefs.lon = lon;
-                    prefs.lat = lat;
-                    prefs.save();
-                    loadData();
-                }
-            });
+//            LocationHelper.getRealCoordinates(new LocationHelper.OmLocationReceived() {
+//                @Override
+//                public void onReceivedLocation(double lat, double lon) {
+//                    UserPrefs prefs = UserPrefs.getPrefs();
+//                    prefs.lon = lon;
+//                    prefs.lat = lat;
+//                    prefs.save();
+//                    loadData();
+//                }
+//            });
         }
     }
 
@@ -58,7 +57,10 @@ public class WeatherPresenterImpl implements WeatherPresenter {
 
     private void loadFromDB(){
         List<WeatherForcastDto> list = weatherInteractor.loadDataFromDB();
-        podactView.setData(list);
+
+        if (list != null) {
+            podactView.setData(list);
+        }
     }
 
     private void load() {
