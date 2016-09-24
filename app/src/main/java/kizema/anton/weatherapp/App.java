@@ -18,9 +18,10 @@ public class App extends Application {
         super.onCreate();
 
         Log.d("LOC", "onCreate");
+        ActiveAndroid.initialize(getApplicationContext());
+
         LocationHelper.getRealCoordinates(getApplicationContext());
 
-        ActiveAndroid.initialize(getApplicationContext());
         LeakCanary.install(this);
 
         UILHelper.init(getApplicationContext());

@@ -2,9 +2,11 @@ package kizema.anton.weatherapp.activities.stations;
 
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -15,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kizema.anton.weatherapp.R;
 import kizema.anton.weatherapp.adapters.ViewPagerAdapter;
+import kizema.anton.weatherapp.helpers.RetainedFragment;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class WeatherListActivity extends AppCompatActivity implements WeatherView {
@@ -34,6 +37,8 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
 
     private ViewPagerAdapter viewPagerAdapter;
 
+    private RetainedFragment <WeatherPresenter> dataFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,20 +46,16 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
         ButterKnife.bind(this);
 
         init();
-        initPresenter(savedInstanceState);
+        initPresenter();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("LOC", "onDestroy");
 
+        dataFragment.setData(weatherPresenter);
         weatherPresenter.removeView(this);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(PRESENTER_STR, weatherPresenter);
-        super.onSaveInstanceState(outState);
     }
 
     private void init() {
@@ -76,15 +77,21 @@ public class WeatherListActivity extends AppCompatActivity implements WeatherVie
         });
     }
 
-    private void initPresenter(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            weatherPresenter = (WeatherPresenter) savedInstanceState.getSerializable(PRESENTER_STR);
-        }
+    private void initPresenter() {
 
-        if (weatherPresenter == null) {
+        FragmentManager fm = getSupportFragmentManager();
+        dataFragment = (RetainedFragment<WeatherPresenter>) fm.findFragmentByTag(PRESENTER_STR);
+
+        if (dataFragment == null) {
+
+            dataFragment = new RetainedFragment<>();
+            fm.beginTransaction().add(dataFragment, PRESENTER_STR).commit();
+
             weatherPresenter = new WeatherPresenterImpl(new WeatherInteractorImpl());
+            dataFragment.setData(weatherPresenter);
         }
 
+        weatherPresenter = dataFragment.getData();
         weatherPresenter.setView(this);
     }
 

@@ -34,8 +34,19 @@ public class WeatherInteractorImpl implements WeatherInteractor {
             @Override
             public void onResponse(Call<WeatherFiveDayList> call, final Response<WeatherFiveDayList> response) {
 
-                List<WeatherForcastDto> list = WeatherFiveDayList.getWeatherForcastDtos(response.body());
-                listener.onComplete(list);
+                WeatherFiveDayList weatherFiveDayList = response.body();
+
+                if (weatherFiveDayList != null && weatherFiveDayList.getCity() != null &&
+                        weatherFiveDayList.getWeatherUpdateList() != null) {
+
+                    Log.e("RRR", "  response.body() != null ");
+
+                    List<WeatherForcastDto> list = WeatherFiveDayList.getWeatherForcastDtos(weatherFiveDayList);
+                    listener.onComplete(list);
+                } else {
+                    Log.e("RRR", "  response.body() == null ");
+                    listener.onError();
+                }
             }
 
             @Override
