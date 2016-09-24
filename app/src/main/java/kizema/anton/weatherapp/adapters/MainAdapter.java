@@ -15,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kizema.anton.weatherapp.App;
 import kizema.anton.weatherapp.R;
+import kizema.anton.weatherapp.helpers.TimeHelper;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
@@ -65,8 +66,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         WeatherForcastDto model = stationList.get(position);
 
         ImageLoader.getInstance().displayImage(model.getIconUrl(), holder.ivIcon, App.defOpts);
-        holder.tvTime.setText(""+model.dayOfMonth + "/" +model.monthOfYear + "/" + model.year
-                + " " + model.hour + ":"+model.minute);
+        holder.tvTime.setText(TimeHelper.getTime(model));
         holder.tvDescr.setText(model.description);
         holder.tvMinMax.setText(model.temp_min + "/" + model.temp_max);
     }

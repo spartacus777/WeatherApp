@@ -9,34 +9,53 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import kizema.anton.weatherapp.R;
+import kizema.anton.weatherapp.helpers.TimeHelper;
 import kizema.anton.weatherapp.model.WeatherForcastDto;
 
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context ctx;
     private List<WeatherForcastDto> list;
+    private Map<String, List<WeatherForcastDto>> map;
+    private List<String> keyDay;
 
     public ViewPagerAdapter(Context ctx) {
         this.ctx = ctx;
-        calculate();
     }
 
-    public void setList(List<WeatherForcastDto> list){
+    public void setList(List<WeatherForcastDto> list) {
         this.list = list;
-        notifyDataSetChanged();
         calculate();
+        notifyDataSetChanged();
     }
 
-    private void calculate(){
+    private void calculate() {
+        map = new LinkedHashMap<>();
+        keyDay = new ArrayList<>(5);
 
+        for (WeatherForcastDto dto : list) {
+            String day = TimeHelper.getDayName(dto);
+
+            if (map.get(day) == null) {
+                List<WeatherForcastDto> smallList = new ArrayList<>();
+                smallList.add(dto);
+                keyDay.add(day);
+                map.put(day, smallList);
+            } else {
+                map.get(day).add(dto);
+            }
+        }
     }
 
     @Override
     public int getCount() {
-        if (list == null || list.size() == 0 ) {
+        if (list == null || list.size() == 0) {
             return 0;
         }
 
@@ -45,7 +64,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Page " + (position + 1);
+        return keyDay.get(position);
     }
 
     @Override
@@ -56,7 +75,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false));
 
-        List<WeatherForcastDto> sub = list.subList(position * list.size()/5, (position+1) * list.size()/5);
+        List<WeatherForcastDto> sub = map.get(keyDay.get(position));
         final MainAdapter adapter = new MainAdapter(sub);
         recyclerView.setAdapter(adapter);
 
